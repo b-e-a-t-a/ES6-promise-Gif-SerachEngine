@@ -15,6 +15,7 @@ App = React.createClass({
 		this.setState({
 			loading: true
 		});
+
 		this.getGif(searchingText, function(gif) {
 			this.setState({
 				loading: false,
@@ -24,10 +25,9 @@ App = React.createClass({
 		}.bind(this));
 	},
 
-	getGif: function(searchingText, callback) {  
+	getGif: function(searchingText) {  
 	    var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
 
-	    function gifGet(url) {
 	    	return new Promise(
 	    		function(resolve,reject){
 	    			const xhr = new XMLHttpRequest();
@@ -43,17 +43,17 @@ App = React.createClass({
 	    		}
 	    	);
 	    }
-	    gifGet(url)
+	 }
+	getGif(searchingText)
 	    .then(response => {
 	    	const data = JSON.parse(xhr.responseText).data;
 	        const gif = {
 	            url: data.fixed_width_downsampled_url,
 	            sourceUrl: data.url
 	        };
-	        callback(gif)
 	    })
-	    .catch(error => console.log('Something went wrong')
-	},
+	    .catch(error => console.log('Something went wrong');
+	
 
 	render: function() {
 
