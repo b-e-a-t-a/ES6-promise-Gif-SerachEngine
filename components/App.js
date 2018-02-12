@@ -3,57 +3,47 @@ var GIPHY_PUB_KEY = '5r6mgQxzp4m2JNHqKJ4XIYSs6dRzNyLv';
 
 App = React.createClass({
 
-	getInitialState() {
-		return {
-			loading: false,
-			searchingText: '',
-			gif: {}
-		};
-	},
-
+    getInitialState: function() {
+        return {
+            loading: false,
+            searchingText: '',
+            gif: {}
+        }
+    },
+    getGif: function(searchingText) {  
+    	var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
+	    	return new Promise((resolve, reject) => {
+    			const xhr = new XMLHttpRequest();
+    			xhr.onload = function() {
+    				if (this.status === 200) {
+	                    var data = JSON.parse(xhr.responseText).data;
+	                    var gif = {
+	                        url: data.fixed_width_downsampled_url,
+	                        sourceUrl: data.url
+	                    };
+	                    resolve(gif);
+    				} else {
+                    	reject(new Error(xhr.status));
+    				}
+    			}
+    			xhr.open('GET', url);
+    			xhr.send();
+	    	});
+	 },
 	handleSearch: function(searchingText) {
-		this.setState({
-			loading: true
-		});
-
-		this.getGif(searchingText, function(gif) {
-			this.setState({
-				loading: false,
-				gif: gif,
-				searchingText: searchingText
-			});
-		}.bind(this));
+        this.setState({
+            loading: true
+        });
+        this.getGif(searchingText)
+            .then((gif) => {
+                this.setState({
+                    loading: false,
+                    gif: gif,
+                    searchingText: searchingText
+                });
+            })
+            .catch(error => console.log(error));
 	},
-
-	getGif: function(searchingText) {  
-	    var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
-
-	    	return new Promise(
-	    		function(resolve,reject){
-	    			const xhr = new XMLHttpRequest();
-	    			xhr.onload = function() {
-	    				if (this.status === 200) {
-	    					resolve(this.response);
-	    				} else {
-	    					reject(error);
-	    				}
-	    			};
-	    			xhr.open('GET', url);
-	    			xhr.send();
-	    		}
-	    	);
-	    }
-	 }
-	getGif(searchingText)
-	    .then(response => {
-	    	const data = JSON.parse(xhr.responseText).data;
-	        const gif = {
-	            url: data.fixed_width_downsampled_url,
-	            sourceUrl: data.url
-	        };
-	    })
-	    .catch(error => console.log('Something went wrong');
-	
 
 	render: function() {
 
